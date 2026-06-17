@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Casa de Penha · Simulador</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap');
+:root{
+  --cream:#F7F3ED;--cream2:#EDE8E0;--white:#FDFAF6;
+  --gold:#9A7B4F;--gold-light:#B8975A;--gold-pale:#D4B07A;
+  --dark:#2C2416;--text:#2C2416;--text-mid:#6B5E4A;
+  --text-light:#9A8E7E;--text-pale:#C4BAB0;
+  --green:#3D6B50;--border:#D8D0C4;--border-light:#EAE4DC;
+  --shadow:rgba(44,36,22,0.07);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:rgba(0,0,0,0);}
+body{background:var(--cream);color:var(--text);font-family:'Inter',sans-serif;font-weight:300;font-size:13px;}
+.wrap{max-width:860px;margin:0 auto;padding:36px 16px 80px;}
+
+.header{text-align:center;margin-bottom:28px;}
+.eyebrow{font-size:9px;font-weight:600;letter-spacing:4px;color:var(--gold);text-transform:uppercase;margin-bottom:10px;}
+.header h1{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;color:var(--dark);letter-spacing:2px;margin-bottom:6px;}
+.header-sub{font-size:11px;color:var(--text-light);letter-spacing:1px;}
+.hdiv{width:32px;height:1px;background:var(--gold-pale);margin:12px auto;}
+
+.banner{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border-light);border:1px solid var(--gold-pale);margin-bottom:16px;}
+.bc{background:linear-gradient(135deg,#F9F3E8,#FDF9F2);padding:12px 10px;text-align:center;}
+.bc-l{font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);margin-bottom:4px;line-height:1.4;}
+.bc-v{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;color:var(--gold);line-height:1.2;}
+.bc-s{font-size:9px;color:var(--text-pale);margin-top:2px;}
+.bc.now .bc-v{color:var(--dark);}
+
+.card{background:var(--white);border:1px solid var(--border-light);box-shadow:0 2px 16px var(--shadow);margin-bottom:14px;}
+
+.sel-grid{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--border-light);}
+.sel-cell{padding:14px 16px;border-right:1px solid var(--border-light);display:flex;flex-direction:column;gap:8px;}
+.sel-cell:last-child{border-right:none;}
+.fl{font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);}
+
+.pbtn{display:inline-block;padding:10px 14px;font-size:12px;font-family:'Inter',sans-serif;font-weight:400;
+  background:var(--white);border:1px solid var(--border);color:var(--text-mid);
+  cursor:pointer;min-height:44px;min-width:44px;letter-spacing:.3px;
+  border-radius:2px;user-select:none;-webkit-user-select:none;
+  text-align:center;line-height:1.2;touch-action:manipulation;}
+.pbtn.sel{background:var(--gold);color:#fff;border-color:var(--gold);font-weight:600;}
+.pbtn-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px;}
+
+.tog-row{padding:14px 16px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.tog-l{font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);white-space:nowrap;}
+.toggle{display:flex;border:1px solid var(--border);overflow:hidden;}
+.tbtn{flex:1;padding:12px 14px;font-size:11px;font-weight:400;cursor:pointer;border:none;
+  background:transparent;color:var(--text-light);font-family:'Inter',sans-serif;
+  min-height:48px;letter-spacing:.3px;border-radius:0;touch-action:manipulation;
+  user-select:none;-webkit-user-select:none;}
+.tbtn.on{background:var(--gold);color:#fff;font-weight:600;}
+
+.ubar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border-light);}
+.us{padding:12px 10px;text-align:center;border-right:1px solid var(--border-light);}
+.us:last-child{border-right:none;}
+.us-l{font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);margin-bottom:3px;}
+.us-v{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;color:var(--dark);}
+.us-v.g{color:var(--gold);}
+
+.stitle{font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);padding:14px 16px 0;}
+.ft{width:100%;border-collapse:collapse;}
+.ft th{font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);padding:9px 12px;text-align:left;border-bottom:1px solid var(--border-light);background:var(--cream2);}
+.ft td{padding:10px 12px;border-bottom:1px solid var(--border-light);font-size:12px;color:var(--text);}
+.ft tr:last-child td{border-bottom:none;}
+.ft .tr td{background:var(--cream2);font-family:'Cormorant Garamond',serif;font-size:15px;padding:12px;}
+.ft .tr td:first-child{font-family:'Inter',sans-serif;font-size:10px;font-weight:600;color:var(--text-mid);}
+.vc{text-align:right;}
+.cub{display:inline-block;padding:1px 5px;font-size:9px;background:rgba(154,123,79,.08);color:var(--gold);border:1px solid rgba(154,123,79,.2);}
+.pi{width:50px;background:transparent;border:none;border-bottom:1px solid var(--border);color:var(--text);
+  padding:2px;font-family:'Inter',sans-serif;font-size:12px;font-weight:300;
+  outline:none;text-align:right;-webkit-appearance:none;border-radius:0;}
+.pi:focus{border-bottom-color:var(--gold);}
+.pr{display:flex;align-items:center;gap:3px;}
+.ps{color:var(--text-light);font-size:12px;}
+.note{font-size:9px;color:var(--text-light);padding:9px 12px;font-style:italic;border-top:1px solid var(--border-light);}
+.warn{font-size:10px;color:#A05030;background:#FFF5EE;border:1px solid #F5C8A8;padding:7px 12px;margin:8px 12px 0;}
+
+.eco{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;
+  background:linear-gradient(135deg,#F0E8D8,#FAF6EF);border:1px solid var(--gold-pale);margin-bottom:14px;gap:12px;}
+.eco-l{font-size:8px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:4px;}
+.eco-v{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:500;color:var(--gold);line-height:1;}
+.eco-s{font-size:10px;color:var(--text-light);margin-top:3px;}
+.eco-pct{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:500;color:var(--gold);line-height:1;text-align:right;}
+.eco-pct-l{font-size:9px;color:var(--text-light);text-align:right;margin-top:3px;}
+
+.cen-title{font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:10px;}
+.cen-grid{display:grid;gap:10px;margin-bottom:14px;}
+.cen-grid.c3{grid-template-columns:repeat(3,1fr);}
+.cen-grid.c4{grid-template-columns:repeat(4,1fr);}
+.cen{background:var(--white);border:1px solid var(--border-light);box-shadow:0 1px 10px var(--shadow);display:flex;flex-direction:column;}
+.cen.entrada{border:2px solid var(--gold);}
+.cen.destaque{background:linear-gradient(160deg,#FAF5EB,var(--white));border-color:var(--gold-pale);}
+.cen-head{padding:13px 14px 11px;border-bottom:1px solid var(--border-light);}
+.cen-fase{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:2px;}
+.cen-fase.verde{color:var(--green);}
+.cen-periodo{font-size:10px;color:var(--text-light);}
+.cen-body{padding:14px;display:flex;flex-direction:column;gap:11px;flex:1;}
+.cen-row-l{font-size:8px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-light);margin-bottom:3px;}
+.cen-row-v{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:500;color:var(--dark);line-height:1;}
+.cen-row-v.ouro{color:var(--gold);}
+.cen-row-v.verde{color:var(--green);font-size:23px;}
+.cen-row-s{font-size:10px;color:var(--text-mid);margin-top:3px;line-height:1.4;}
+.cen-sep{height:1px;background:var(--border-light);}
+
+.share-card{background:var(--white);border:1px solid var(--border-light);box-shadow:0 2px 16px var(--shadow);margin-bottom:14px;padding:18px 18px 14px;}
+.share-title{font-size:8px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.share-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.sf{display:flex;flex-direction:column;gap:5px;}
+.sf-l{font-size:8px;font-weight:500;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);}
+.sf input{background:transparent;border:none;border-bottom:1px solid var(--border);padding:7px 0;
+  font-family:'Inter',sans-serif;font-size:14px;color:var(--text);outline:none;
+  border-radius:0;-webkit-appearance:none;width:100%;}
+.sf input:focus{border-bottom-color:var(--gold);}
+.share-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.sbtn{display:flex;align-items:center;justify-content:center;gap:7px;padding:14px 20px;
+  font-size:12px;font-weight:500;cursor:pointer;border:none;
+  font-family:'Inter',sans-serif;white-space:nowrap;min-height:48px;
+  border-radius:2px;touch-action:manipulation;user-select:none;-webkit-user-select:none;}
+.sbtn-wa{background:#25D366;color:#fff;}
+.sbtn-em{background:var(--gold);color:#fff;}
+.sbtn-pr{background:transparent;color:var(--text-mid);border:1px solid var(--border);}
+
+.footer{text-align:center;margin-top:40px;padding-top:18px;border-top:1px solid var(--border-light);}
+.footer-b{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:500;color:var(--gold);letter-spacing:4px;text-transform:uppercase;margin-bottom:4px;}
+.footer-s{font-size:8px;color:var(--text-pale);letter-spacing:2px;text-transform:uppercase;}
+.hidden{display:none!important;}
+
+@media print{.share-card,.tog-row,.share-btns{display:none!important;}.wrap{padding:8px;}.card,.cen{box-shadow:none;}}
+@media(max-width:640px){
+  .banner{grid-template-columns:1fr 1fr;}
+  .ubar{grid-template-columns:1fr 1fr;}
+  .sel-grid{grid-template-columns:1fr;}
+  .sel-cell{border-right:none;border-bottom:1px solid var(--border-light);}
+  .cen-grid.c3{grid-template-columns:1fr;}
+  .cen-grid.c4{grid-template-columns:1fr 1fr;}
+  .share-fields{grid-template-columns:1fr;}
+  .eco{flex-direction:column;text-align:center;}
+  .eco-pct{text-align:center;}
+  .header h1{font-size:28px;}
+}
+@media(max-width:400px){.cen-grid.c4{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div class="eyebrow">DAXO Desenvolvimento Imobiliario</div>
+  <h1>Casa de Penha</h1>
+  <div class="hdiv"></div>
+  <div class="header-sub">Simulador de Investimento · Isay Weinfeld · Penha, SC · Entrega Dez/2031</div>
+</div>
+
+<div class="banner">
+  <div class="bc now"><div class="bc-l">Fase Investidor · Agora</div><div class="bc-v">R$ 24.478/m²</div><div class="bc-s">Media off-market</div></div>
+  <div class="bc"><div class="bc-l">Lancamento · 2 Sem/2027</div><div class="bc-v">R$ 34.000/m²</div><div class="bc-s">+39% vs investidor</div></div>
+  <div class="bc"><div class="bc-l">Entrega Conservadora · Dez/2031</div><div class="bc-v">R$ 50.000/m²</div><div class="bc-s">Projecao minima</div></div>
+  <div class="bc"><div class="bc-l">Entrega Otimista · Dez/2031</div><div class="bc-v" style="color:var(--gold-light)">R$ 60.000/m²+</div><div class="bc-s">Frente-mar · Isay Weinfeld</div></div>
+</div>
+
+<div class="card">
+  <div class="sel-grid">
+    <div class="sel-cell">
+      <div class="fl">Torre</div>
+      <div class="pbtn-wrap" id="torreBtns"></div>
+    </div>
+    <div class="sel-cell">
+      <div class="fl">Unidade</div>
+      <div class="pbtn-wrap" id="unidadeBtns"><span style="font-size:12px;color:var(--text-pale)">Selecione a Torre primeiro</span></div>
+    </div>
+  </div>
+  <div class="tog-row">
+    <div class="tog-l">Forma de Pagamento</div>
+    <div class="toggle">
+      <button class="tbtn on" id="btn60">Padrao 60x</button>
+      <button class="tbtn" id="btn36">Tabela 36x c/ descontos</button>
+    </div>
+  </div>
+  <div class="ubar hidden" id="ubar">
+    <div class="us"><div class="us-l">Unidade</div><div class="us-v" id="iUn">-</div></div>
+    <div class="us"><div class="us-l">Area</div><div class="us-v" id="iAr">-</div></div>
+    <div class="us"><div class="us-l">Valor/m2</div><div class="us-v g" id="iVm">-</div></div>
+    <div class="us"><div class="us-l">Valor Total</div><div class="us-v g" id="iVt">-</div></div>
+  </div>
+</div>
+
+<div id="results" class="hidden">
+  <div id="panel60" class="card">
+    <div class="stitle">Fluxo Padrao — 60 Parcelas Mensais</div>
+    <table class="ft" style="margin-top:10px">
+      <thead><tr><th>Componente</th><th>Proporcao</th><th class="vc">Valor Total</th><th class="vc">Parcela</th><th class="vc">Reajuste</th></tr></thead>
+      <tbody>
+        <tr><td>Entrada (Ato)</td><td>30%</td><td class="vc" id="f60e">-</td><td class="vc">A vista</td><td class="vc">-</td></tr>
+        <tr><td>Parcelas mensais</td><td>70%</td><td class="vc" id="f60s">-</td><td class="vc" id="f60p">-</td><td class="vc"><span class="cub">CUB-SC</span></td></tr>
+        <tr class="tr"><td>Custo Total</td><td></td><td class="vc" id="f60t" colspan="3">-</td></tr>
+      </tbody>
+    </table>
+    <div class="note">Parcelas reajustadas pelo CUB-SC mensalmente. Entrada sem reajuste. Valores nominais na data base.</div>
+  </div>
+
+  <div id="panel36" class="card hidden">
+    <div class="stitle">Tabela Especial — 36 Meses com Descontos</div>
+    <div id="warnPct" class="warn hidden"></div>
+    <table class="ft" style="margin-top:10px">
+      <thead><tr><th>Componente</th><th>% Total</th><th>Desconto</th><th class="vc">Valor Cheio</th><th class="vc">c/ Desconto</th><th class="vc">Parcela/mes</th><th class="vc">Reajuste</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Ato (Entrada)</td>
+          <td><div class="pr"><input class="pi" id="pAto" type="number" value="40" min="1" max="98"><span class="ps">%</span></div></td>
+          <td><div class="pr"><input class="pi" id="dAto" type="number" value="30" min="0" max="50"><span class="ps">%</span></div></td>
+          <td class="vc" id="a36aB">-</td><td class="vc" id="a36aP">-</td><td class="vc">A vista</td><td class="vc">-</td>
+        </tr>
+        <tr>
+          <td>Parcelas 1 a 6</td>
+          <td><div class="pr"><input class="pi" id="pP1" type="number" value="15" min="1" max="98"><span class="ps">%</span></div></td>
+          <td><div class="pr"><input class="pi" id="dP1" type="number" value="18" min="0" max="50"><span class="ps">%</span></div></td>
+          <td class="vc" id="a36p1B">-</td><td class="vc" id="a36p1P">-</td><td class="vc" id="a36p1U">-</td><td class="vc"><span class="cub">CUB-SC</span></td>
+        </tr>
+        <tr>
+          <td>Parcelas 7 a 12</td>
+          <td><div class="pr"><input class="pi" id="pP7" type="number" value="15" min="1" max="98"><span class="ps">%</span></div></td>
+          <td><div class="pr"><input class="pi" id="dP7" type="number" value="10" min="0" max="50"><span class="ps">%</span></div></td>
+          <td class="vc" id="a36p7B">-</td><td class="vc" id="a36p7P">-</td><td class="vc" id="a36p7U">-</td><td class="vc"><span class="cub">CUB-SC</span></td>
+        </tr>
+        <tr>
+          <td>Saldo 24 meses</td>
+          <td><div class="pr"><input class="pi" id="pSaldo" type="number" value="30" min="1" max="98"><span class="ps">%</span></div></td>
+          <td><span style="font-size:10px;color:var(--text-pale)">-</span></td>
+          <td class="vc" id="a36sB">-</td><td class="vc" id="a36sP">-</td><td class="vc" id="a36sU">-</td><td class="vc"><span class="cub">CUB-SC</span></td>
+        </tr>
+        <tr class="tr">
+          <td>Custo Total c/ Descontos</td>
+          <td id="r36sp" style="font-family:'Inter',sans-serif;font-size:10px"></td>
+          <td id="r36td" style="font-family:'Inter',sans-serif;font-size:11px;color:var(--green);font-weight:500"></td>
+          <td></td><td class="vc" id="r36tt" colspan="3">-</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="note">Parcelas 1-6, 7-12 e Saldo 24x reajustados pelo CUB-SC. Entrada sem reajuste. Valores nominais na data base.</div>
+  </div>
+
+  <div id="ecoBand" class="eco hidden">
+    <div>
+      <div class="eco-l">Economia com Descontos</div>
+      <div class="eco-v" id="ecoVal">-</div>
+      <div class="eco-s">Voce paga abaixo do preco cheio da unidade</div>
+    </div>
+    <div>
+      <div class="eco-pct" id="ecoPct">-</div>
+      <div class="eco-pct-l">de desconto efetivo</div>
+    </div>
+  </div>
+
+  <div class="cen-title">Projecao de Ganho de Capital</div>
+  <div id="cenGrid" class="cen-grid c3">
+    <div id="card36x" class="cen entrada hidden">
+      <div class="cen-head"><div class="cen-fase verde">SUA ENTRADA · TABELA 36x</div><div class="cen-periodo">Com descontos exclusivos</div></div>
+      <div class="cen-body">
+        <div><div class="cen-row-l">Custo efetivo por m2</div><div class="cen-row-v ouro" id="c36vm2">-</div></div>
+        <div class="cen-sep"></div>
+        <div><div class="cen-row-l">Custo total</div><div class="cen-row-v ouro" id="c36total">-</div></div>
+        <div class="cen-sep"></div>
+        <div><div class="cen-row-l">Economia vs. preco cheio</div><div class="cen-row-v verde" id="c36eco">-</div><div class="cen-row-s" id="c36ecoS">-</div></div>
+      </div>
+    </div>
+    <div id="card60x" class="cen entrada">
+      <div class="cen-head"><div class="cen-fase" id="fase60lbl">SUA ENTRADA · FLUXO 60x</div><div class="cen-periodo" id="sub60lbl">Preco fase investidor · off-market</div></div>
+      <div class="cen-body">
+        <div><div class="cen-row-l">Preco por m2</div><div class="cen-row-v ouro" id="c60vm2">-</div></div>
+        <div class="cen-sep"></div>
+        <div><div class="cen-row-l">Custo total</div><div class="cen-row-v ouro" id="c60total">-</div></div>
+        <div class="cen-sep"></div>
+        <div><div class="cen-row-l">Posicao</div><div class="cen-row-s">Base do investimento — menor preco disponivel antes do lancamento publico</div></div>
+      </div>
+    </div>
+    <div class="cen destaque">
+      <div class="cen-head"><div class="cen-fase">LANCAMENTO · 2 SEM/2027</div><div class="cen-periodo">Media R$ 34.000/m² · Em 12 a 18 meses</div></div>
+      <div class="cen-body">
+        <div><div class="cen-row-l">Valor de mercado projetado</div><div class="cen-row-v" id="vgv34">-</div></div>
+        <div class="cen-sep"></div>
+        <div><div class="cen-row-l">Ganho de capital</div><div class="cen-row-v verde" id="ganho34">-</div><div class="cen-row-s" id="det34">-</div></div>
+      </div>
+    </div>
+    <div class="cen destaque" style="border-color:var(--gold)">
+      <div class="cen-head"><div class="cen-fase">ENTREGA · DEZ/2031</div><div class="cen-periodo">Media R$ 50.000/m² · Cenario conservador</div></div>
+      <div class="cen-body">
+        <div><div class="cen-row-l">Valor de mercado projetado</div><div class="cen-row-v" id="vgv50">-</div></div>
+        <div class="cen-sep"></div>
+        <div><div class="cen-row-l">Ganho de capital</div><div class="cen-row-v verde" id="ganho50">-</div><div class="cen-row-s" id="det50">-</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="share-card">
+    <div class="share-title">Enviar Proposta ao Cliente</div>
+    <div class="share-fields">
+      <div class="sf"><div class="sf-l">Nome do Cliente</div><input id="cliNome" type="text" placeholder="Ex: Joao Silva"></div>
+      <div class="sf"><div class="sf-l">WhatsApp (com DDD)</div><input id="cliWA" type="tel" placeholder="47 99999-0000"></div>
+      <div class="sf"><div class="sf-l">E-mail</div><input id="cliEmail" type="email" placeholder="cliente@email.com"></div>
+      <div class="sf"><div class="sf-l">Corretor / Responsavel</div><input id="cliCor" type="text" placeholder="Seu nome"></div>
+    </div>
+    <div class="share-btns">
+      <button class="sbtn sbtn-wa" id="btnWA">WhatsApp</button>
+      <button class="sbtn sbtn-em" id="btnEmail">E-mail</button>
+      <button class="sbtn sbtn-pr" id="btnPrint">Imprimir / PDF</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-b">DAXO</div>
+  <div class="footer-s">Boutique Luxury Real Estate · Penha · Santa Catarina</div>
+</div>
+</div>
+
+<script>
+(function() {
+
+var DATA = {
+  T1:{label:"Torre 1",units:{"101":{m2:257,vm2:22000},"102":{m2:217,vm2:22000},"201":{m2:274,vm2:24200},"202":{m2:219,vm2:24200},"301":{m2:274,vm2:25410},"302":{m2:219,vm2:25410},"401":{m2:274,vm2:26681},"402":{m2:219,vm2:26681},"501":{m2:274,vm2:29349},"502":{m2:219,vm2:29349}}},
+  T2:{label:"Torre 2",units:{"101":{m2:217,vm2:22000},"102":{m2:257,vm2:22000},"201":{m2:219,vm2:24200},"202":{m2:274,vm2:24200},"301":{m2:219,vm2:26620},"302":{m2:274,vm2:26620},"401":{m2:219,vm2:29282},"402":{m2:274,vm2:29282}}},
+  T3:{label:"Torre 3",units:{"101":{m2:257,vm2:20900},"102":{m2:267,vm2:20900},"201":{m2:274,vm2:22990},"202":{m2:274,vm2:22990},"301":{m2:274,vm2:24140},"302":{m2:274,vm2:24140},"401":{m2:274,vm2:25346},"402":{m2:274,vm2:25346},"501":{m2:274,vm2:27881},"502":{m2:274,vm2:27881}}},
+  T4:{label:"Torre 4",units:{"301":{m2:274,vm2:21780},"302":{m2:274,vm2:21780},"401":{m2:274,vm2:22869},"402":{m2:274,vm2:22869},"501":{m2:274,vm2:24012},"502":{m2:274,vm2:24012},"601":{m2:274,vm2:25213},"602":{m2:274,vm2:25213},"701":{m2:274,vm2:27734},"702":{m2:274,vm2:27734}}},
+  T5:{label:"Torre 5",units:{"101":{m2:267,vm2:19800},"102":{m2:217,vm2:19800},"201":{m2:274,vm2:21780},"202":{m2:219,vm2:21780},"301":{m2:274,vm2:22869},"302":{m2:219,vm2:22869},"401":{m2:274,vm2:24012},"402":{m2:219,vm2:24012},"501":{m2:274,vm2:25213},"502":{m2:219,vm2:25213},"601":{m2:274,vm2:27734},"602":{m2:219,vm2:27734}}},
+  T6:{label:"Torre 6",units:{"101":{m2:217,vm2:22000},"102":{m2:257,vm2:22000},"201":{m2:219,vm2:24200},"202":{m2:274,vm2:24200},"301":{m2:219,vm2:25410},"302":{m2:274,vm2:25410},"401":{m2:219,vm2:26681},"402":{m2:274,vm2:26681},"501":{m2:219,vm2:29349},"502":{m2:274,vm2:29349}}}
+};
+
+var mode = '60';
+var torreAtiva = '';
+var unidadeAtiva = '';
+var cD = null;
+var c36 = 0;
+var c60 = 0;
+
+function g(id) { return document.getElementById(id); }
+function setText(id, v) { var e = g(id); if (e) e.textContent = v; }
+function fmt(v) { return 'R$ ' + Math.round(v).toLocaleString('pt-BR'); }
+function fmtP(v) { return (v * 100).toFixed(1).replace('.', ',') + '%'; }
+function fmtX(v) { return v.toFixed(2).replace('.', ',') + 'x'; }
+function pv(id) { var e = g(id); return e ? (parseFloat(e.value) || 0) : 0; }
+
+function addTap(el, fn) {
+  var moved = false;
+  el.addEventListener('touchstart', function() { moved = false; }, {passive: true});
+  el.addEventListener('touchmove', function() { moved = true; }, {passive: true});
+  el.addEventListener('touchend', function(e) {
+    if (!moved) { e.preventDefault(); fn(); }
+  });
+  el.addEventListener('click', fn);
+}
+
+function setMode(m) {
+  mode = m;
+  g('btn60').className = m === '60' ? 'tbtn on' : 'tbtn';
+  g('btn36').className = m === '36' ? 'tbtn on' : 'tbtn';
+  g('panel60').className = m === '60' ? 'card' : 'card hidden';
+  g('panel36').className = m === '36' ? 'card' : 'card hidden';
+  g('ecoBand').className = m === '36' ? 'eco' : 'eco hidden';
+  if (cD) { calcular(); }
+}
+
+function selTorre(t) {
+  torreAtiva = t;
+  unidadeAtiva = '';
+  cD = null;
+  g('results').className = 'hidden';
+  g('ubar').className = 'ubar hidden';
+
+  var tbtns = g('torreBtns').querySelectorAll('.pbtn');
+  for (var i = 0; i < tbtns.length; i++) {
+    tbtns[i].className = tbtns[i].getAttribute('data-t') === t ? 'pbtn sel' : 'pbtn';
+  }
+
+  var wrap = g('unidadeBtns');
+  wrap.innerHTML = '';
+  if (!DATA[t]) { return; }
+  var keys = Object.keys(DATA[t].units).sort();
+  for (var i = 0; i < keys.length; i++) {
+    (function(u) {
+      var d = DATA[t].units[u];
+      var btn = document.createElement('button');
+      btn.className = 'pbtn';
+      btn.setAttribute('data-u', u);
+      btn.textContent = u + ' · ' + d.m2 + 'm²';
+      addTap(btn, function() { selUnidade(u); });
+      wrap.appendChild(btn);
+    })(keys[i]);
+  }
+}
+
+function selUnidade(u) {
+  unidadeAtiva = u;
+  var ubtns = g('unidadeBtns').querySelectorAll('.pbtn');
+  for (var i = 0; i < ubtns.length; i++) {
+    ubtns[i].className = ubtns[i].getAttribute('data-u') === u ? 'pbtn sel' : 'pbtn';
+  }
+  calcular();
+}
+
+function calcular() {
+  if (!torreAtiva || !unidadeAtiva) { return; }
+  var d = DATA[torreAtiva] && DATA[torreAtiva].units[unidadeAtiva];
+  if (!d) { return; }
+  cD = d;
+
+  var total = d.m2 * d.vm2;
+  c60 = total;
+
+  g('ubar').className = 'ubar';
+  setText('iUn', DATA[torreAtiva].label + ' · ' + unidadeAtiva);
+  setText('iAr', d.m2 + ' m²');
+  setText('iVm', fmt(d.vm2));
+  setText('iVt', fmt(total));
+
+  setText('f60e', fmt(total * 0.3));
+  setText('f60s', fmt(total * 0.7));
+  setText('f60p', fmt(total * 0.7 / 60) + '/mes');
+  setText('f60t', fmt(total));
+
+  var pA = pv('pAto') / 100, pP1 = pv('pP1') / 100, pP7 = pv('pP7') / 100, pS = pv('pSaldo') / 100;
+  var soma = pA + pP1 + pP7 + pS;
+  var w = g('warnPct');
+  if (Math.abs(soma - 1) > 0.001) {
+    w.className = 'warn';
+    w.textContent = 'Soma: ' + (soma * 100).toFixed(1) + '%. Ajuste para totalizar 100%.';
+  } else { w.className = 'warn hidden'; }
+
+  var dA = pv('dAto') / 100, dP1 = pv('dP1') / 100, dP7 = pv('dP7') / 100;
+  var aB = total * pA, aP = aB * (1 - dA);
+  var p1B = total * pP1, p1P = p1B * (1 - dP1);
+  var p7B = total * pP7, p7P = p7B * (1 - dP7);
+  var sB = total * pS;
+  var t36 = aP + p1P + p7P + sB;
+  var tD = (aB - aP) + (p1B - p1P) + (p7B - p7P);
+  c36 = t36;
+
+  setText('a36aB', fmt(aB)); setText('a36aP', fmt(aP));
+  setText('a36p1B', fmt(p1B)); setText('a36p1P', fmt(p1P)); setText('a36p1U', fmt(p1P / 6) + '/mes');
+  setText('a36p7B', fmt(p7B)); setText('a36p7P', fmt(p7P)); setText('a36p7U', fmt(p7P / 6) + '/mes');
+  setText('a36sB', fmt(sB)); setText('a36sP', fmt(sB)); setText('a36sU', fmt(sB / 24) + '/mes');
+  setText('r36tt', fmt(t36));
+  setText('r36sp', (soma * 100).toFixed(0) + '%');
+  setText('r36td', tD > 0 ? '- ' + fmt(tD) + ' de desconto' : '');
+  setText('ecoVal', fmt(tD));
+  setText('ecoPct', fmtP(tD / total));
+
+  var base = mode === '36' ? t36 : total;
+  var is36 = mode === '36';
+
+  g('cenGrid').className = is36 ? 'cen-grid c4' : 'cen-grid c3';
+  g('card36x').className = is36 ? 'cen entrada' : 'cen entrada hidden';
+  setText('fase60lbl', is36 ? 'REFERENCIA · FLUXO 60x' : 'SUA ENTRADA · FLUXO 60x');
+  setText('sub60lbl', is36 ? 'Preco cheio fase investidor' : 'Preco fase investidor · off-market');
+
+  setText('c36vm2', fmt(t36 / d.m2) + '/m²');
+  setText('c36total', fmt(t36));
+  setText('c36eco', '+ ' + fmt(tD));
+  setText('c36ecoS', fmtP(tD / total) + ' abaixo do preco cheio');
+  setText('c60vm2', fmt(d.vm2) + '/m²');
+  setText('c60total', fmt(total));
+
+  var vgv34 = d.m2 * 34000, g34 = vgv34 - base, m34 = vgv34 / base;
+  setText('vgv34', fmt(vgv34));
+  setText('ganho34', '+ ' + fmt(g34));
+  setText('det34', 'Capital se multiplica ' + fmtX(m34) + ' — alta de ' + fmtP(g34 / base) + ' em 12 a 18 meses');
+
+  var vgv50 = d.m2 * 50000, g50 = vgv50 - base, m50 = vgv50 / base;
+  setText('vgv50', fmt(vgv50));
+  setText('ganho50', '+ ' + fmt(g50));
+  setText('det50', 'Capital se multiplica ' + fmtX(m50) + ' — alta de ' + fmtP(g50 / base) + ' em 5 anos');
+
+  g('results').className = '';
+}
+
+function buildMsg() {
+  var nome = g('cliNome').value || 'Cliente';
+  var cor = g('cliCor').value || 'Equipe DAXO';
+  if (!cD || !torreAtiva || !unidadeAtiva) { return null; }
+  var total = cD.m2 * cD.vm2;
+  var base = mode === '36' ? c36 : total;
+  var vgv34 = cD.m2 * 34000, g34 = vgv34 - base, m34 = vgv34 / base;
+  var vgv50 = cD.m2 * 50000, g50 = vgv50 - base, m50 = vgv50 / base;
+  var fluxo = mode === '36'
+    ? 'Tabela Especial 36 meses\n   Custo com descontos: ' + fmt(c36) + '\n   Economia: ' + fmt(total - c36) + ' (' + fmtP((total - c36) / total) + ' abaixo do preco cheio)'
+    : 'Fluxo Padrao 60 meses\n   Entrada: ' + fmt(total * 0.3) + '\n   Parcela mensal: ' + fmt(total * 0.7 / 60) + ' (reajuste CUB-SC)';
+  return 'Ola, ' + nome + '!\n\n'
+    + 'Segue sua proposta no *Casa de Penha* — assinado por *Isay Weinfeld*, 135m de frente para o Atlantico em Penha, SC.\n\n'
+    + '------------------------------\n*UNIDADE*\n'
+    + DATA[torreAtiva].label + ' · Unidade ' + unidadeAtiva + '\n'
+    + 'Area: ' + cD.m2 + ' m²\n'
+    + 'Preco fase investidor: ' + fmt(cD.vm2) + '/m²\n'
+    + 'Valor total: ' + fmt(total) + '\n\n'
+    + '------------------------------\n*PAGAMENTO*\n' + fluxo + '\n\n'
+    + '------------------------------\n*PROJECAO DE GANHO DE CAPITAL*\n'
+    + 'Base de calculo: ' + fmt(base) + '\n\n'
+    + 'Lancamento 2 Sem/2027 — R$ 34.000/m²\n'
+    + '   Valor projetado: ' + fmt(vgv34) + '\n'
+    + '   Ganho: + ' + fmt(g34) + ' (' + fmtP(g34 / base) + ')\n'
+    + '   Capital se multiplica ' + fmtX(m34) + ' em 12 a 18 meses\n\n'
+    + 'Entrega Dez/2031 — R$ 50.000/m² (conservador)\n'
+    + '   Valor projetado: ' + fmt(vgv50) + '\n'
+    + '   Ganho: + ' + fmt(g50) + ' (' + fmtP(g50 / base) + ')\n'
+    + '   Capital se multiplica ' + fmtX(m50) + ' em 5 anos\n\n'
+    + '------------------------------\n'
+    + cor + ' · DAXO Desenvolvimento Imobiliario\n\n'
+    + 'Valores nominais. Parcelas sujeitas a reajuste CUB-SC. Projecoes nao garantem retorno.';
+}
+
+// INIT — tudo via addEventListener, zero onclick inline
+document.addEventListener('DOMContentLoaded', function() {
+
+  // Botoes de torre
+  var torreBtns = g('torreBtns');
+  var torres = ['T1','T2','T3','T4','T5','T6'];
+  var labels = {T1:'Torre 1',T2:'Torre 2',T3:'Torre 3',T4:'Torre 4',T5:'Torre 5',T6:'Torre 6'};
+  for (var i = 0; i < torres.length; i++) {
+    (function(t) {
+      var btn = document.createElement('button');
+      btn.className = 'pbtn';
+      btn.setAttribute('data-t', t);
+      btn.textContent = labels[t];
+      addTap(btn, function() { selTorre(t); });
+      torreBtns.appendChild(btn);
+    })(torres[i]);
+  }
+
+  // Toggle 60/36
+  addTap(g('btn60'), function() { setMode('60'); });
+  addTap(g('btn36'), function() { setMode('36'); });
+
+  // Inputs 36x
+  var inputs = ['pAto','dAto','pP1','dP1','pP7','dP7','pSaldo'];
+  for (var i = 0; i < inputs.length; i++) {
+    (function(id) {
+      var el = g(id);
+      if (el) { el.addEventListener('input', function() { if (cD) calcular(); }); }
+    })(inputs[i]);
+  }
+
+  // Botoes share
+  addTap(g('btnWA'), function() {
+    var wa = g('cliWA').value.replace(/\D/g, '');
+    if (!wa) { alert('Informe o WhatsApp do cliente.'); return; }
+    var txt = buildMsg();
+    if (!txt) { alert('Selecione torre e unidade primeiro.'); return; }
+    window.open('https://wa.me/55' + wa + '?text=' + encodeURIComponent(txt), '_blank');
+  });
+
+  addTap(g('btnEmail'), function() {
+    var em = g('cliEmail').value;
+    if (!em) { alert('Informe o e-mail do cliente.'); return; }
+    var txt = buildMsg();
+    if (!txt) { alert('Selecione torre e unidade primeiro.'); return; }
+    window.location.href = 'mailto:' + em + '?subject=' + encodeURIComponent('Casa de Penha · Proposta DAXO') + '&body=' + encodeURIComponent(txt);
+  });
+
+  addTap(g('btnPrint'), function() { window.print(); });
+
+});
+
+})();
+</script>
+</body>
+</html>
